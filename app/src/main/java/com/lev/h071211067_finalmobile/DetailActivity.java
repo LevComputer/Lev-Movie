@@ -1,13 +1,15 @@
 package com.lev.h071211067_finalmobile;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lev.h071211067_finalmobile.lain.Database;
 import com.lev.h071211067_finalmobile.networking.Favorite;
 import com.lev.h071211067_finalmobile.networking.Movie;
 import com.lev.h071211067_finalmobile.networking.TVShow;
@@ -21,6 +23,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Database database = new Database(this);
         typeImageView = findViewById(R.id.iv_type);
         backdropImageView = findViewById(R.id.iv_wallpaper);
         backButton = findViewById(R.id.btn_back);
@@ -29,6 +32,7 @@ public class DetailActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.tv_title);
         ratingTextView = findViewById(R.id.tv_rating);
         synopsisTextView = findViewById(R.id.tv_synopsis);
+        database.open();
 
         Intent intent = getIntent();
         if (intent.getParcelableExtra("test") != null) {
@@ -42,6 +46,28 @@ public class DetailActivity extends AppCompatActivity {
             typeImageView.setImageResource(R.drawable.round_movie_24);
             Glide.with(this).load(posterUrl).into(posterImageView);
             Glide.with(this).load(backdropUrl).into(backdropImageView);
+
+            if (database.isFavorite(favorite)) {
+                isFavorite = true;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+            } else {
+                isFavorite = false;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+            }
+
+            favoriteButton.setOnClickListener(view -> {
+                if (!isFavorite) {
+                    database.addFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
+                } else {
+                    database.removeFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         else if (intent.getParcelableExtra("tvShow") != null) {
             TVShow show = intent.getParcelableExtra("tvShow");
@@ -54,6 +80,27 @@ public class DetailActivity extends AppCompatActivity {
             typeImageView.setImageResource(R.drawable.round_tv_24);
             Glide.with(this).load(posterUrl).into(posterImageView);
             Glide.with(this).load(backdropUrl).into(backdropImageView);
+            if (database.isFavorite(favorite)) {
+                isFavorite = true;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+            } else {
+                isFavorite = false;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+            }
+
+            favoriteButton.setOnClickListener(view -> {
+                if (!isFavorite) {
+                    database.addFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
+                } else {
+                    database.removeFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else if (intent.getParcelableExtra("favorite") != null) {
             Favorite favorite = intent.getParcelableExtra("favorite");
             if (favorite.isMovie()) {
@@ -75,6 +122,27 @@ public class DetailActivity extends AppCompatActivity {
                 Glide.with(this).load(posterUrl).into(posterImageView);
                 Glide.with(this).load(backdropUrl).into(backdropImageView);
             }
+            if (database.isFavorite(favorite)) {
+                isFavorite = true;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+            } else {
+                isFavorite = false;
+                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+            }
+
+            favoriteButton.setOnClickListener(view -> {
+                if (!isFavorite) {
+                    database.addFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
+                } else {
+                    database.removeFavorite(favorite);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+                    isFavorite = !isFavorite;
+                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
