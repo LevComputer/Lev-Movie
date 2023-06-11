@@ -1,22 +1,26 @@
 package com.lev.h071211067_finalmobile.networking;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class TVShow {
+public class TVShow implements Parcelable {
     @SerializedName("id") private int id;
-    @SerializedName("popularity") private int popularity;
-    @SerializedName("genre_ids") private int genreIds;
-    @SerializedName("vote_average") private int voteAverage;
+    @SerializedName("popularity") private double popularity;
+    @SerializedName("genre_ids") private int[] genreIds;
+    @SerializedName("vote_average") private double voteAverage;
     @SerializedName("vote_count") private int voteCount;
     @SerializedName("name") private String name;
     @SerializedName("overview") private String overview;
     @SerializedName("poster_path") private String posterPath;
     @SerializedName("first_air_date") private String firstAirDate;
     @SerializedName("backdrop_path") private String backdropPath;
-    @SerializedName("origin_country") private String originCountry;
+    @SerializedName("origin_country") private String[] originCountry;
 
-//    Constructor
-    public TVShow(int id, int popularity, int genreIds, int voteAverage, int voteCount, String name, String overview, String posterPath, String firstAirDate, String backdropPath, String originCountry) {
+    public TVShow(int id, double popularity, int[] genreIds, double voteAverage, int voteCount, String name, String overview, String posterPath, String firstAirDate, String backdropPath, String[] originCountry) {
         this.id = id;
         this.popularity = popularity;
         this.genreIds = genreIds;
@@ -30,17 +34,65 @@ public class TVShow {
         this.originCountry = originCountry;
     }
 
-//    Getter
+    // Parcelable implementation
+    protected TVShow(Parcel in) {
+        id = in.readInt();
+        popularity = in.readDouble();
+        genreIds = in.createIntArray();
+        voteAverage = in.readDouble();
+        voteCount = in.readInt();
+        name = in.readString();
+        overview = in.readString();
+        posterPath = in.readString();
+        firstAirDate = in.readString();
+        backdropPath = in.readString();
+        originCountry = in.createStringArray();
+    }
+
+    public static final Creator<TVShow> CREATOR = new Creator<TVShow>() {
+        @Override
+        public TVShow createFromParcel(Parcel in) {
+            return new TVShow(in);
+        }
+
+        @Override
+        public TVShow[] newArray(int size) {
+            return new TVShow[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeDouble(popularity);
+        dest.writeIntArray(genreIds);
+        dest.writeDouble(voteAverage);
+        dest.writeInt(voteCount);
+        dest.writeString(name);
+        dest.writeString(overview);
+        dest.writeString(posterPath);
+        dest.writeString(firstAirDate);
+        dest.writeString(backdropPath);
+        dest.writeStringArray(originCountry);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    //    Getter
     public int getId() {
         return id;
     }
-    public int getPopularity() {
+    public double getPopularity() {
         return popularity;
     }
-    public int getGenreIds() {
+    public int[] getGenreIds() {
         return genreIds;
     }
-    public int getVoteAverage() {
+    public double getVoteAverage() {
         return voteAverage;
     }
     public int getVoteCount() {
@@ -61,7 +113,7 @@ public class TVShow {
     public String getBackdropPath() {
         return backdropPath;
     }
-    public String getOriginCountry() {
+    public String[] getOriginCountry() {
         return originCountry;
     }
 
@@ -72,7 +124,7 @@ public class TVShow {
     public void setPopularity(int popularity) {
         this.popularity = popularity;
     }
-    public void setGenreIds(int genreIds) {
+    public void setGenreIds(int[] genreIds) {
         this.genreIds = genreIds;
     }
     public void setVoteAverage(int voteAverage) {
@@ -96,7 +148,7 @@ public class TVShow {
     public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
     }
-    public void setOriginCountry(String originCountry) {
+    public void setOriginCountry(String[] originCountry) {
         this.originCountry = originCountry;
     }
 }

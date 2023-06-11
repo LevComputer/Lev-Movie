@@ -8,6 +8,4 @@ public class DataResponse<T> {
     public T getData() {
         return data;
     }
-
-
 }
