@@ -1,13 +1,28 @@
 package com.lev.h071211067_finalmobile.recyclerview;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder> {
+import com.bumptech.glide.Glide;
+import com.lev.h071211067_finalmobile.DetailActivity;
+import com.lev.h071211067_finalmobile.R;
+import com.lev.h071211067_finalmobile.networking.Favorite;
+import com.lev.h071211067_finalmobile.networking.Movie;
+import com.lev.h071211067_finalmobile.networking.TVShow;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder> {
     @NonNull
     @Override
     public FavoriteAdapter.FavoriteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
