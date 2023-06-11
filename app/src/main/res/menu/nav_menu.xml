@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/nav_movie" android:title="Movie" android:icon="@drawable/round_movie_24" />
+    <item android:id="@+id/nav_tv_show" android:title="TV Show" android:icon="@drawable/round_tv_24"/>
+    <item android:id="@+id/nav_favorite" android:title="Favorite" android:icon="@drawable/round_favorite_24"/>
+</menu>

@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">H071211067 - Final Mobile</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="api_key">bddfadb863ccad44428495021ab45a96</string>
+    <string name="base_url">https://api.themoviedb.org/3/</string>
+</resources>
