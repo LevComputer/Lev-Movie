@@ -42,7 +42,6 @@ public class DetailActivity extends AppCompatActivity {
             typeImageView.setImageResource(R.drawable.round_movie_24);
             Glide.with(this).load(posterUrl).into(posterImageView);
             Glide.with(this).load(backdropUrl).into(backdropImageView);
-
         }
         else if (intent.getParcelableExtra("tvShow") != null) {
             TVShow show = intent.getParcelableExtra("tvShow");
@@ -55,7 +54,6 @@ public class DetailActivity extends AppCompatActivity {
             typeImageView.setImageResource(R.drawable.round_tv_24);
             Glide.with(this).load(posterUrl).into(posterImageView);
             Glide.with(this).load(backdropUrl).into(backdropImageView);
-
         } else if (intent.getParcelableExtra("favorite") != null) {
             Favorite favorite = intent.getParcelableExtra("favorite");
             if (favorite.isMovie()) {
