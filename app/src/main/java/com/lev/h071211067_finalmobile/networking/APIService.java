@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APIService {
-
+//  Movie
     @GET("movie/top_rated")
     Call<DataResponse<List<Movie>>> getMovies(
             @Query("api_key") String apiKey

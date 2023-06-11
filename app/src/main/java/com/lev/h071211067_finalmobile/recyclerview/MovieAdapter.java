@@ -82,7 +82,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     .into(posterImageView);
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("test", movie);
+                intent.putExtra("movie", movie);
                 context.startActivity(intent);
             });
         }

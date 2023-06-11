@@ -9,21 +9,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lev.h071211067_finalmobile.lain.Database;
+import com.lev.h071211067_finalmobile.lain.DatabaseContract;
+import com.lev.h071211067_finalmobile.lain.DatabaseHelper;
 import com.lev.h071211067_finalmobile.networking.Favorite;
 import com.lev.h071211067_finalmobile.networking.Movie;
 import com.lev.h071211067_finalmobile.networking.TVShow;
 
 public class DetailActivity extends AppCompatActivity {
+    private DatabaseHelper dbHelper;
     private ImageView backdropImageView, backButton, favoriteButton, posterImageView, typeImageView;
-    private TextView titleTextView, ratingTextView, synopsisTextView;
-    boolean isFavorite = false;
+    private TextView titleTextView, ratingTextView, synopsisTextView, releaseTextView;
+    boolean favorite = false;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        Database database = new Database(this);
+
         typeImageView = findViewById(R.id.iv_type);
         backdropImageView = findViewById(R.id.iv_wallpaper);
         backButton = findViewById(R.id.btn_back);
@@ -32,117 +33,124 @@ public class DetailActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.tv_title);
         ratingTextView = findViewById(R.id.tv_rating);
         synopsisTextView = findViewById(R.id.tv_synopsis);
-        database.open();
+        releaseTextView = findViewById(R.id.tv_release_date);
+        dbHelper = new DatabaseHelper(this);
 
         Intent intent = getIntent();
-        if (intent.getParcelableExtra("test") != null) {
-            Movie movie = intent.getParcelableExtra("test");
-            Favorite favorite = new Favorite(movie);
-            String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + movie.getPosterPath();
-            String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + movie.getBackdropPath();
-            titleTextView.setText(movie.getTitle());
-            ratingTextView.setText(String.valueOf(movie.getVoteAverage()));
-            synopsisTextView.setText(movie.getOverview());
-            typeImageView.setImageResource(R.drawable.round_movie_24);
-            Glide.with(this).load(posterUrl).into(posterImageView);
-            Glide.with(this).load(backdropUrl).into(backdropImageView);
-
-            if (database.isFavorite(favorite)) {
-                isFavorite = true;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-            } else {
-                isFavorite = false;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-            }
-
-            favoriteButton.setOnClickListener(view -> {
-                if (!isFavorite) {
-                    database.addFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
-                } else {
-                    database.removeFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else if (intent.getParcelableExtra("tvShow") != null) {
+        if (intent.getParcelableExtra("movie") != null) {
+            Movie movie = intent.getParcelableExtra("movie");
+            handleFilmDetails(movie.getTitle(), String.valueOf(movie.getVoteAverage()), movie.getOverview(), movie.getPosterPath(), movie.getBackdropUrl(), movie.getId(), movie.getReleaseDate(), R.drawable.ic_movie);
+        } else if (intent.getParcelableExtra("tvShow") != null) {
             TVShow show = intent.getParcelableExtra("tvShow");
-            Favorite favorite = new Favorite(show);
-            String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getTvShow().getPosterPath();
-            String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getTvShow().getBackdropPath();
-            titleTextView.setText(favorite.getTvShow().getName());
-            ratingTextView.setText(String.valueOf(favorite.getTvShow().getVoteAverage()));
-            synopsisTextView.setText(favorite.getTvShow().getOverview());
-            typeImageView.setImageResource(R.drawable.round_tv_24);
-            Glide.with(this).load(posterUrl).into(posterImageView);
-            Glide.with(this).load(backdropUrl).into(backdropImageView);
-            if (database.isFavorite(favorite)) {
-                isFavorite = true;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-            } else {
-                isFavorite = false;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-            }
-
-            favoriteButton.setOnClickListener(view -> {
-                if (!isFavorite) {
-                    database.addFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
-                } else {
-                    database.removeFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
-                }
-            });
+            handleFilmDetails(show.getName(), String.valueOf(show.getVoteAverage()), show.getOverview(), show.getPosterPath(), show.getBackdropPath(), show.getId(), show.getName(), R.drawable.ic_tv);
         } else if (intent.getParcelableExtra("favorite") != null) {
             Favorite favorite = intent.getParcelableExtra("favorite");
-            if (favorite.isMovie()) {
-                String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getMovie().getPosterPath();
-                String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getMovie().getBackdropPath();
-                titleTextView.setText(favorite.getMovie().getTitle());
-                ratingTextView.setText(String.valueOf(favorite.getMovie().getVoteAverage()));
-                synopsisTextView.setText(favorite.getMovie().getOverview());
-                typeImageView.setImageResource(R.drawable.round_movie_24);
-                Glide.with(this).load(posterUrl).into(posterImageView);
-                Glide.with(this).load(backdropUrl).into(backdropImageView);
-            } else {
-                String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getTvShow().getPosterPath();
-                String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getTvShow().getBackdropPath();
-                titleTextView.setText(favorite.getTvShow().getName());
-                ratingTextView.setText(String.valueOf(favorite.getTvShow().getVoteAverage()));
-                synopsisTextView.setText(favorite.getTvShow().getOverview());
-                typeImageView.setImageResource(R.drawable.round_tv_24);
-                Glide.with(this).load(posterUrl).into(posterImageView);
-                Glide.with(this).load(backdropUrl).into(backdropImageView);
-            }
-            if (database.isFavorite(favorite)) {
-                isFavorite = true;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-            } else {
-                isFavorite = false;
-                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-            }
 
-            favoriteButton.setOnClickListener(view -> {
-                if (!isFavorite) {
-                    database.addFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_true);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "added to Favorite", Toast.LENGTH_SHORT).show();
-                } else {
-                    database.removeFavorite(favorite);
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_false);
-                    isFavorite = !isFavorite;
-                    Toast.makeText(this, "delete to Favorite", Toast.LENGTH_SHORT).show();
-                }
-            });
+            handleFilmDetails(favorite.getTitle(), String.valueOf(favorite.getVoteAverage()), favorite.getOverview(), favorite.getPosterPath(), favorite.getBackdropPath(), favorite.getId(), favorite.getTitle(), R.drawable.ic_favorite_true);
+        }
+
+        backButton.setOnClickListener(view -> {
+            onBackPressed();
+        });
+    }
+
+    private void handleFilmDetails(String title, String voteAverage, String overview, String posterPath, String backdropPath, int id, String releaseDate, int type) {
+
+//        String[] tanggalArray = releaseDate.split("-");
+//        String tahun = tanggalArray[0];
+//        String bulan = takeMonth(tanggalArray[1]);
+//        String tanggal = tanggalArray[2];
+
+        String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + posterPath;
+        String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + backdropPath;
+        titleTextView.setText(title);
+        ratingTextView.setText(voteAverage);
+        releaseTextView.setText(releaseDate);
+        Glide.with(this).load(posterUrl).into(posterImageView);
+        Glide.with(this).load(backdropUrl).into(backdropImageView);
+        synopsisTextView.setText(overview);
+        typeImageView.setImageResource(type);
+
+        favoriteButton.setOnClickListener(view -> {
+            if (!dbHelper.isMovieInFavorites(title)) {
+                favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+                favorite = true;
+                addMovieToFavorites(id, overview, posterUrl, releaseDate, title, Double.parseDouble(voteAverage), backdropUrl);
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+                favorite = false;
+                deleteMovieFromFavorites(title);
+            }
+        });
+
+        if (dbHelper.isMovieInFavorites(title)) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_true);
+        } else {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_false);
+        }
+
+    }
+
+//    private String takeMonth(String monthDate) {
+//        String formattedMonth = "";
+//        switch (monthDate) {
+//            case "01":
+//                formattedMonth = "January";
+//                break;
+//            case "02":
+//                formattedMonth = "February";
+//                break;
+//            case "03":
+//                formattedMonth = "Maret";
+//                break;
+//            case "04":
+//                formattedMonth = "April";
+//                break;
+//            case "05":
+//                formattedMonth = "May";
+//                break;
+//            case "06":
+//                formattedMonth = "June";
+//                break;
+//            case "07":
+//                formattedMonth = "July";
+//                break;
+//            case "08":
+//                formattedMonth = "August";
+//                break;
+//            case "09":
+//                formattedMonth = "September";
+//                break;
+//            case "10":
+//                formattedMonth = "October";
+//                break;
+//            case "11":
+//                formattedMonth = "November";
+//                break;
+//            case "12":
+//                formattedMonth = "December";
+//                break;
+//
+//        }
+//        return formattedMonth;
+//    }
+
+    private void addMovieToFavorites(int id, String overview, String posterUrl, String releaseDate, String title, double voteAverage, String backdropUrl) {
+        Movie movie = new Movie(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl);
+        long result = dbHelper.insertMovie(movie);
+        if (result != -1) {
+            Toast.makeText(this, "Success added to favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to add to favorites", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteMovieFromFavorites(String nama) {
+        long result = dbHelper.deleteMovie(nama);
+        if (result != -1) {
+            Toast.makeText(this, "Success deleted from favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to delete from favorites", Toast.LENGTH_SHORT).show();
         }
     }
 }

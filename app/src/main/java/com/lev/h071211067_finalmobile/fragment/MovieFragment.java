@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.lev.h071211067_finalmobile.R;
+import com.lev.h071211067_finalmobile.lain.CustomLayoutManager;
 import com.lev.h071211067_finalmobile.networking.APIConfig;
 import com.lev.h071211067_finalmobile.networking.APIService;
 import com.lev.h071211067_finalmobile.networking.DataResponse;
@@ -28,7 +29,7 @@ import retrofit2.Response;
 public class MovieFragment extends Fragment {
     RecyclerView rvMovie;
     private MovieAdapter movieAdapter;
-    private static final String API_KEY = "dad1cd55d3f6d09536f1c6bde1fe8d07";
+    private static final String API_KEY = "bddfadb863ccad44428495021ab45a96";
 
     public MovieFragment() {
         // Required empty public constructor
@@ -39,7 +40,8 @@ public class MovieFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie, container, false);
 
         rvMovie = view.findViewById(R.id.rv_movie);
-        rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
+        CustomLayoutManager layoutManager = new CustomLayoutManager(getContext(), 2);
+        rvMovie.setLayoutManager(layoutManager);
         movieAdapter = new MovieAdapter();
         rvMovie.setAdapter(movieAdapter);
         APIService apiService = APIConfig.getService();
