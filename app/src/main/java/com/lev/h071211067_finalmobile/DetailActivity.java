@@ -46,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
         } else if (intent.getParcelableExtra("favorite") != null) {
             Favorite favorite = intent.getParcelableExtra("favorite");
 
-            handleFilmDetails(favorite.getTitle(), String.valueOf(favorite.getVoteAverage()), favorite.getOverview(), favorite.getPosterPath(), favorite.getBackdropPath(), favorite.getId(), favorite.getTitle(), R.drawable.ic_favorite_true);
+            handleFilmDetails(favorite.getTitle(), String.valueOf(favorite.getVoteAverage()), favorite.getOverview(), favorite.getPosterPath(), favorite.getBackdropPath(), favorite.getId(), favorite.getReleaseDate(), R.drawable.ic_favorite_true);
         }
 
         backButton.setOnClickListener(view -> {
